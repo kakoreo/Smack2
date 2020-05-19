@@ -1,5 +1,6 @@
 package com.example.smack
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -40,15 +41,18 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    fun channedAddBtnClicked(view: View) {
+    fun channeldAddBtnClicked(view: View) {
 
     }
 
-    fun loginBtnClicked(view: View) {
+    fun loginNavBtnClicked(view: View) {
+        val loginIntent = Intent(this, LoginAvtivity::class.java)
+        startActivity(loginIntent)
 
     }
 
     fun sendMessageBtnClicked(view: View) {
 
     }
+
 }
