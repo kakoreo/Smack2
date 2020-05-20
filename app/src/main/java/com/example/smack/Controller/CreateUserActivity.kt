@@ -1,11 +1,11 @@
-package com.example.smack
+package com.example.smack.Controller
 
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.example.smack.R
 import kotlinx.android.synthetic.main.activity_create_user.*
-import kotlin.random.Random
 
 class CreateUserActivity : AppCompatActivity() {
 
@@ -35,7 +35,7 @@ class CreateUserActivity : AppCompatActivity() {
 
 
     }
-
+//  RGB colorもRGBごとにランダムな数字を与える
     fun createBackgroundColorBtnClicked(view: View) {
         val random = java.util.Random()
         val r = random.nextInt(255)
@@ -44,6 +44,7 @@ class CreateUserActivity : AppCompatActivity() {
 
         createAvatarImageView.setBackgroundColor(Color.rgb(r, g, b))
 
+//    ios用に3桁の数字を0-1までの数字に変換する
         val savedR = r.toDouble() /255
         val savedG = g.toDouble() /255
         val savedB = b.toDouble() /255
