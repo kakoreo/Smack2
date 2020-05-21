@@ -1,6 +1,9 @@
 package com.example.smack.Controller
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.findNavController
@@ -10,7 +13,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smack.R
+import com.example.smack.Services.UserDataService
+import com.example.smack.Utility.BROADCAST_USER_DATA_CHANGE
+import kotlinx.android.synthetic.main.activity_login_avtivity.*
+import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,9 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -33,6 +39,21 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_slideshow
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(
+            BROADCAST_USER_DATA_CHANGE))
+    }
+
+    private val userDataChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            userNameNavHeader.text = UserDataService.name
+            userEmailNavHeader.text = UserDataService.email
+            val resourceId = resources.getIdentifier(UserDataService.avatarName, "drawable", packageName)
+            userIconNavHeader.setImageResource(resourceId)
+                loginBtnNavHeader.text = "Logout"
+
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
