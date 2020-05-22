@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.findNavController
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smack.R
+import com.example.smack.Services.AuthService
 import com.example.smack.Services.UserDataService
 import com.example.smack.Utility.BROADCAST_USER_DATA_CHANGE
 import kotlinx.android.synthetic.main.activity_login_avtivity.*
@@ -51,6 +53,7 @@ class MainActivity : AppCompatActivity() {
             val resourceId = resources.getIdentifier(UserDataService.avatarName, "drawable", packageName)
             userIconNavHeader.setImageResource(resourceId)
                 loginBtnNavHeader.text = "Logout"
+            userIconNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
 
         }
 
@@ -66,8 +69,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginNavBtnClicked(view: View) {
-        val loginIntent = Intent(this, LoginAvtivity::class.java)
-        startActivity(loginIntent)
+        if (AuthService.isLoggedIn) {
+            UserDataService.logout()
+            userNameNavHeader.text = "Login"
+            userEmailNavHeader.text = ""
+            userIconNavHeader.setImageResource(R.drawable.profiledefault)
+            userIconNavHeader.setBackgroundColor(Color.TRANSPARENT)
+            loginBtnNavHeader.text = "Login"
+        } else {
+            val loginIntent = Intent(this, LoginAvtivity::class.java)
+            startActivity(loginIntent)
+        }
+
 
     }
 
