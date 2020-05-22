@@ -1,12 +1,12 @@
 package com.example.smack.Controller
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        hideKeyboard()
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
@@ -65,7 +66,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun channeldAddBtnClicked(view: View) {
-
+        if (AuthService.isLoggedIn) {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.add_group_dialog, null)
+            builder.setView(dialogView)
+                .setPositiveButton("Add") { dialog: DialogInterface?, which: Int ->
+                    val groupNameTextFild = dialogView.findViewById<EditText>(R.id.addGroupNameText)
+                    val groupDescriptionTextField = dialogView.findViewById<EditText>(R.id.addGroupDescriptionText)
+                    val groupName = groupNameTextFild.text.toString()
+                    val groupDescription = groupDescriptionTextField.text.toString()
+//                    create group with group name and description.
+                    hideKeyboard()
+                }
+                .setNegativeButton("Cancel") {dialog: DialogInterface?, which: Int ->
+                    hideKeyboard()
+                }
+                .show()
+        }
     }
 
     fun loginNavBtnClicked(view: View) {
@@ -86,6 +103,13 @@ class MainActivity : AppCompatActivity() {
 
     fun sendMessageBtnClicked(view: View) {
 
+    }
+
+    fun hideKeyboard() {
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (inputManager.isAcceptingText) {
+            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        }
     }
 
 }
