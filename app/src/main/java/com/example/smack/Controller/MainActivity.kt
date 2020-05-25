@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.findNavController
@@ -24,11 +25,18 @@ import com.example.smack.Utility.BROADCAST_USER_DATA_CHANGE
 import com.example.smack.Utility.SOCKET_URL
 import io.socket.client.IO
 import io.socket.emitter.Emitter
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
+    lateinit var channelAdapter : ArrayAdapter<Channel>
+
+    private fun setupAdapters() {
+        channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
+        channel_list.adapter = channelAdapter
+    }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -39,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         socket.connect()
         socket.on("channelCreated", onNewChannel)
+        setupAdapters()
 
         hideKeyboard()
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -66,13 +75,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(context: Context, intent: Intent?) {
             userNameNavHeader.text = UserDataService.name
             userEmailNavHeader.text = UserDataService.email
             val resourceId = resources.getIdentifier(UserDataService.avatarName, "drawable", packageName)
             userIconNavHeader.setImageResource(resourceId)
                 loginBtnNavHeader.text = "Logout"
             userIconNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
+
+            MessageService.getChannels(context) { complete ->
+                if (complete) {
+                    channelAdapter.notifyDataSetChanged()
+                }
+            }
 
         }
 
@@ -110,9 +125,7 @@ class MainActivity : AppCompatActivity() {
 
             val newChannel = Channel(channelName, channelDescription, channelId)
             MessageService.channels.add(newChannel)
-            println(newChannel.name)
-            println(newChannel.description)
-            println(newChannel.id)
+            channelAdapter.notifyDataSetChanged()
         }
     }
 
