@@ -3,6 +3,7 @@ package com.example.smack.Controller
 import android.content.*
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -48,6 +49,9 @@ class MainActivity : AppCompatActivity() {
         socket.connect()
         socket.on("channelCreated", onNewChannel)
         setupAdapters()
+        if (App.prefs.isLoggedIn) {
+            AuthService.findUserByEmail(this){}
+        }
 
         hideKeyboard()
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -76,21 +80,21 @@ class MainActivity : AppCompatActivity() {
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
-            userNameNavHeader.text = UserDataService.name
-            userEmailNavHeader.text = UserDataService.email
-            val resourceId = resources.getIdentifier(UserDataService.avatarName, "drawable", packageName)
-            userIconNavHeader.setImageResource(resourceId)
+            if (App.prefs.isLoggedIn) {
+                userNameNavHeader.text = UserDataService.name
+                userEmailNavHeader.text = UserDataService.email
+                val resourceId = resources.getIdentifier(UserDataService.avatarName, "drawable", packageName)
+                userIconNavHeader.setImageResource(resourceId)
                 loginBtnNavHeader.text = "Logout"
-            userIconNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
+                userIconNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
 
-            MessageService.getChannels(context) { complete ->
-                if (complete) {
-                    channelAdapter.notifyDataSetChanged()
+                MessageService.getChannels(context) { complete ->
+                    if (complete) {
+                        channelAdapter.notifyDataSetChanged()
+                    }
                 }
             }
-
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -98,15 +102,16 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    fun channeldAddBtnClicked(view: View) {
-        if (AuthService.isLoggedIn) {
+    fun channelAddBtnClicked(view: View) {
+        Log.w("DDEBUG", "channelAddBtnClicked check if user isLoggedIn.")
+        if (App.prefs.isLoggedIn) {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_group_dialog, null)
             builder.setView(dialogView)
                 .setPositiveButton("Add") { dialog: DialogInterface?, which: Int ->
-                    val groupNameTextFild = dialogView.findViewById<EditText>(R.id.addGroupNameText)
+                    val groupNameTextField = dialogView.findViewById<EditText>(R.id.addGroupNameText)
                     val groupDescriptionTextField = dialogView.findViewById<EditText>(R.id.addGroupDescriptionText)
-                    val groupName = groupNameTextFild.text.toString()
+                    val groupName = groupNameTextField.text.toString()
                     val groupDescription = groupDescriptionTextField.text.toString()
 //                    create group with group name and description.
                     socket.emit("newChannel", groupName, groupDescription)
@@ -130,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginNavBtnClicked(view: View) {
-        if (AuthService.isLoggedIn) {
+        if (App.prefs.isLoggedIn) {
             UserDataService.logout()
             userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
@@ -138,7 +143,7 @@ class MainActivity : AppCompatActivity() {
             userIconNavHeader.setBackgroundColor(Color.TRANSPARENT)
             loginBtnNavHeader.text = "Login"
         } else {
-            val loginIntent = Intent(this, LoginAvtivity::class.java)
+            val loginIntent = Intent(this, LoginActivity::class.java)
             startActivity(loginIntent)
         }
 
