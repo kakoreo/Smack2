@@ -15,14 +15,20 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.smack.Model.Channel
 import com.example.smack.R
 import com.example.smack.Services.AuthService
+import com.example.smack.Services.MessageService
 import com.example.smack.Services.UserDataService
 import com.example.smack.Utility.BROADCAST_USER_DATA_CHANGE
-import kotlinx.android.synthetic.main.activity_login_avtivity.*
+import com.example.smack.Utility.SOCKET_URL
+import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    val socket = IO.socket(SOCKET_URL)
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -31,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        socket.connect()
+        socket.on("channelCreated", onNewChannel)
+
         hideKeyboard()
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -42,9 +51,18 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_slideshow
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
+    }
 
+    override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(
             BROADCAST_USER_DATA_CHANGE))
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        socket.disconnect()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+        super.onDestroy()
     }
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
@@ -76,12 +94,25 @@ class MainActivity : AppCompatActivity() {
                     val groupName = groupNameTextFild.text.toString()
                     val groupDescription = groupDescriptionTextField.text.toString()
 //                    create group with group name and description.
-                    hideKeyboard()
+                    socket.emit("newChannel", groupName, groupDescription)
                 }
                 .setNegativeButton("Cancel") {dialog: DialogInterface?, which: Int ->
-                    hideKeyboard()
                 }
                 .show()
+        }
+    }
+
+    private val onNewChannel = Emitter.Listener { args ->
+        runOnUiThread {
+            val channelName = args[0] as String
+            val channelDescription = args[1] as String
+            val channelId = args[2] as String
+
+            val newChannel = Channel(channelName, channelDescription, channelId)
+            MessageService.channels.add(newChannel)
+            println(newChannel.name)
+            println(newChannel.description)
+            println(newChannel.id)
         }
     }
 
@@ -102,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendMessageBtnClicked(view: View) {
-
+        hideKeyboard()
     }
 
     fun hideKeyboard() {
