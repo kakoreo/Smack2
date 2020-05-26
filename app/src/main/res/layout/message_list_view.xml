@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/messageUserImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/dark0" />
+
+    <TextView
+        android:id="@+id/messageUserNameLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/messageUserImage"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Shibainu" />
+
+    <TextView
+        android:id="@+id/timeStampLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/messageUserNameLbl"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="May 26, 5pm" />
+
+    <TextView
+        android:id="@+id/messageBodyLbl"
+        android:layout_width="342dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/messageUserImage"
+        app:layout_constraintTop_toBottomOf="@+id/timeStampLbl"
+        tools:text="The narrator begins with a discussion on the nature of grown-ups and their inability to perceive especially important things. As a test to determine if a grown-up is enlightened and like a child, he shows them a picture that he drew at the age of 6 depicting a snake which has eaten an elephant. The grown-ups always reply that the picture depicts a hat, and so he knows to talk of &quot;reasonable&quot; things to them, rather than fanciful.  The narrator becomes a pilot, and, one day, his plane crashes in the Sahara, far from civilization. He has 8 days of water supply and must fix his airplane to be saved.  In the middle of the desert, the narrator is unexpectedly greeted by a young boy who is nicknamed as &quot;the little prince&quot;. The prince has golden hair, a lovable laugh, and will repeat questions until they are answered.  Upon encountering the narrator, the little prince asks him to draw a sheep. The narrator first shows him his old picture of the elephant inside the snake, which, to the narrator's surprise, the prince interprets correctly. After three failed attempts at drawing a sheep, the frustrated narrator simply draws a box (crate), claiming that the sheep the prince wants is inside the box. Again, to the narrator's surprise, the prince exclaims that this was exactly the drawing he wanted.  Over the course of eight days stranded in the desert, while the narrator attempts to repair his plane, the little prince recounts the story of his life.  The prince begins by describing lif" />
+</androidx.constraintlayout.widget.ConstraintLayout>
