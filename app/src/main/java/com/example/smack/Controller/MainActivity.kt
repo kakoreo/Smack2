@@ -27,12 +27,14 @@ import com.example.smack.Utility.SOCKET_URL
 import io.socket.client.IO
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter : ArrayAdapter<Channel>
+    var selectedChannel : Channel? = null
 
     private fun setupAdapters() {
         channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
@@ -88,13 +90,22 @@ class MainActivity : AppCompatActivity() {
                 loginBtnNavHeader.text = "Logout"
                 userIconNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
 
-                MessageService.getChannels(context) { complete ->
+                MessageService.getChannels { complete ->
                     if (complete) {
-                        channelAdapter.notifyDataSetChanged()
+                        if (MessageService.channels.count() > 0) {
+                            selectedChannel = MessageService.channels[0]
+                            channelAdapter.notifyDataSetChanged()
+                            updateWithChannel()
+                        }
                     }
                 }
             }
         }
+    }
+
+    fun updateWithChannel() {
+        mainChannelName.text = "#${selectedChannel?.name}"
+        //download messages for channel
     }
 
     override fun onSupportNavigateUp(): Boolean {

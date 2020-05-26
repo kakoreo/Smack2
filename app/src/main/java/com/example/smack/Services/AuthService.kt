@@ -15,13 +15,7 @@ import org.json.JSONObject
 
 object AuthService {
 
-    fun registerUser(
-        context: Context,
-        email: String,
-        password: String,
-        complete: (Boolean) -> Unit
-    ) {
-
+    fun registerUser(email: String, password: String, complete: (Boolean) -> Unit) {
         val jsonBody = JSONObject()
         jsonBody.put("email", email)
         jsonBody.put("password", password)
@@ -46,21 +40,13 @@ object AuthService {
         App.prefs.requestQueue.add(registerRequest)
     }
 
-    fun loginUser(
-        context: Context,
-        email: String,
-        password: String,
-        complete: (Boolean) -> Unit
-    ) {
-
+    fun loginUser(email: String, password: String, complete: (Boolean) -> Unit) {
         val jsonBody = JSONObject()
         jsonBody.put("email", email)
         jsonBody.put("password", password)
         val requestBody = jsonBody.toString()
 
-        val loginRequest =
-            object : JsonObjectRequest(Method.POST, URL_LOGIN, null, Response.Listener { response ->
-
+        val loginRequest = object : JsonObjectRequest(Method.POST, URL_LOGIN, null, Response.Listener { response ->
                 try {
                     App.prefs.userEmail = response.getString("user")
                     App.prefs.authToken = response.getString("token")
@@ -86,7 +72,7 @@ object AuthService {
         App.prefs.requestQueue.add(loginRequest)
     }
 
-    fun createUser(context: Context, email: String, name: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
+    fun createUser(email: String, name: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
 
         val jsonBody = JSONObject()
         jsonBody.put("name", name)
