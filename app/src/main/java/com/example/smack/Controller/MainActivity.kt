@@ -3,6 +3,7 @@ package com.example.smack.Controller
 import android.content.*
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -16,6 +17,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smack.Model.Channel
 import com.example.smack.R
@@ -53,6 +55,12 @@ class MainActivity : AppCompatActivity() {
         setupAdapters()
         if (App.prefs.isLoggedIn) {
             AuthService.findUserByEmail(this){}
+        }
+
+        channel_list.setOnItemClickListener { _, _, position, _ ->
+            selectedChannel = MessageService.channels[position]
+            drawer_layout.closeDrawer(GravityCompat.START)
+            updateWithChannel()
         }
 
         hideKeyboard()
