@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="@+id/nav_host_fragment" />
 
     <EditText
-        android:id="@+id/messsageTextField"
+        android:id="@+id/messageTextField"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -65,7 +65,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/messsageTextField"
+        app:layout_constraintBottom_toTopOf="@+id/messageTextField"
         app:layout_constraintEnd_toEndOf="@+id/nav_host_fragment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainChannelName" />
