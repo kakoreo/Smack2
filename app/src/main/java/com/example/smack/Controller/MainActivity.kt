@@ -63,6 +63,10 @@ class MainActivity : AppCompatActivity() {
         socket.on("messageCreated", onNewMessage)
 
         setupAdapters()
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(
+            BROADCAST_USER_DATA_CHANGE))
+
         if (App.prefs.isLoggedIn) {
             AuthService.findUserByEmail(this){}
         }
@@ -84,12 +88,6 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_slideshow
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
-    }
-
-    override fun onResume() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(
-            BROADCAST_USER_DATA_CHANGE))
-        super.onResume()
     }
 
     override fun onDestroy() {
@@ -207,6 +205,7 @@ class MainActivity : AppCompatActivity() {
             userIconNavHeader.setImageResource(R.drawable.profiledefault)
             userIconNavHeader.setBackgroundColor(Color.TRANSPARENT)
             loginBtnNavHeader.text = "Login"
+            mainChannelName.text = "Please log in"
         } else {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivity(loginIntent)
